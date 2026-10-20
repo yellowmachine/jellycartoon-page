@@ -1,0 +1,31 @@
+---
+import { fecha } from '../lib/rutas';
+import type { Version } from '../lib/novedades';
+
+interface Props {
+	version: Version;
+	/** Nivel del título: 2 en la página de novedades, 3 en la portada (dentro de su sección). */
+	nivel?: 2 | 3;
+}
+
+const { version, nivel = 2 } = Astro.props;
+const Titulo = `h${nivel}` as const;
+const nombre = version.version.replace(/^v/, '');
+const subtitulo = version.titulo !== version.version && version.titulo !== nombre ? version.titulo : undefined;
+const id = `version-${version.version.replace(/[^\w-]/g, '-')}`;
+---
+
+<article class="version" aria-labelledby={id}>
+	<header class="version__cabecera">
+		<Titulo id={id} class="version__nombre">
+			{version.version}
+			{subtitulo && <span class="version__subtitulo">{subtitulo}</span>}
+		</Titulo>
+		<p class="version__datos">
+			<time datetime={version.fecha.toISOString()}>{fecha(version.fecha)}</time>
+			{version.prerelease && <span class="etiqueta">Versión de prueba</span>}
+		</p>
+	</header>
+	{version.html ? <div class="prosa" set:html={version.html} /> : <p class="apagado">Sin notas.</p>}
+	<p><a href={version.url}>Ver {version.version} en GitHub</a></p>
+</article>

@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import { cargarNovedades, ultimaVersion } from '../lib/novedades';
+import { fecha, ruta } from '../lib/rutas';
+import { cargarWeb } from '../lib/web';
+
+const { producto } = await cargarWeb();
+const ultima = ultimaVersion(await cargarNovedades());
+---
+
+<Base
+	titulo="Instalar"
+	descripcion={producto.instalar_resumen ?? `Cómo instalar ${producto.nombre} en un ordenador de casa.`}
+	producto={producto}
+	actual="instalar"
+>
+	<div class="seccion">
+		<div class="contenedor contenedor--estrecho">
+			<h1>Instalar {producto.nombre}</h1>
+			{producto.instalar_resumen && <p class="entradilla">{producto.instalar_resumen}</p>}
+			<p class="acciones">
+				<a class="boton" href={producto.instalar}>Instrucciones de instalación</a>
+				<a class="boton boton--secundario" href={producto.repositorio}>Código en GitHub</a>
+			</p>
+			{
+				ultima && (
+					<p class="apagado">
+						La última versión es la{' '}
+						<a href={ruta('novedades/')}>{ultima.version}</a>, del{' '}
+						<time datetime={ultima.fecha.toISOString()}>{fecha(ultima.fecha)}</time>.
+					</p>
+				)
+			}
+		</div>
+	</div>
+</Base>

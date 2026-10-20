@@ -1,0 +1,55 @@
+---
+import Tarjeta from '../components/Tarjeta.astro';
+import Version from '../components/Version.astro';
+import Base from '../layouts/Base.astro';
+import { cargarNovedades, ultimaVersion } from '../lib/novedades';
+import { ruta } from '../lib/rutas';
+import { cargarWeb } from '../lib/web';
+
+const { producto, funciones } = await cargarWeb();
+const ultima = ultimaVersion(await cargarNovedades());
+---
+
+<Base descripcion={producto.descripcion} producto={producto} actual="inicio">
+	<section class="portada" aria-labelledby="lema">
+		<div class="contenedor">
+			<p class="antetitulo">{producto.nombre}</p>
+			<h1 id="lema">{producto.lema}</h1>
+			<p class="entradilla">{producto.descripcion}</p>
+			<p class="acciones">
+				<a class="boton" href={ruta('instalar/')}>Cómo instalarla</a>
+				<a class="boton boton--secundario" href={producto.repositorio}>Código en GitHub</a>
+			</p>
+		</div>
+	</section>
+
+	<section class="seccion" aria-labelledby="para-quien">
+		<div class="contenedor contenedor--estrecho">
+			<h2 id="para-quien">Para quién es</h2>
+			<p class="entradilla">{producto.para_quien}</p>
+		</div>
+	</section>
+
+	<section class="seccion" aria-labelledby="funciones">
+		<div class="contenedor">
+			<h2 id="funciones">Qué hace</h2>
+			<div class="rejilla">
+				{funciones.map((funcion) => <Tarjeta funcion={funcion} />)}
+			</div>
+		</div>
+	</section>
+
+	{
+		ultima && (
+			<section class="seccion" aria-labelledby="ultima-version">
+				<div class="contenedor contenedor--estrecho">
+					<h2 id="ultima-version">Última versión</h2>
+					<Version version={ultima} nivel={3} />
+					<p>
+						<a href={ruta('novedades/')}>Todas las novedades</a>
+					</p>
+				</div>
+			</section>
+		)
+	}
+</Base>

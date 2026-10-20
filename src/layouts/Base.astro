@@ -1,0 +1,73 @@
+---
+import '../styles/global.css';
+import { ruta } from '../lib/rutas';
+import type { Producto } from '../lib/web';
+
+interface Props {
+	titulo?: string;
+	descripcion: string;
+	producto: Producto;
+	actual: 'inicio' | 'novedades' | 'instalar';
+}
+
+const { titulo, descripcion, producto, actual } = Astro.props;
+const tituloCompleto = titulo ? `${titulo} · ${producto.nombre}` : `${producto.nombre}: ${producto.lema}`;
+const enlaces = [
+	{ id: 'inicio', texto: 'Inicio', href: ruta() },
+	{ id: 'novedades', texto: 'Novedades', href: ruta('novedades/') },
+	{ id: 'instalar', texto: 'Instalar', href: ruta('instalar/') },
+] as const;
+const canonica = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
+		<meta name="theme-color" content="#09090b" />
+		<title>{tituloCompleto}</title>
+		<meta name="description" content={descripcion} />
+		<link rel="canonical" href={canonica} />
+		<link rel="icon" href={ruta('favicon.svg')} type="image/svg+xml" />
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content="es_ES" />
+		<meta property="og:title" content={tituloCompleto} />
+		<meta property="og:description" content={descripcion} />
+		<meta property="og:url" content={canonica} />
+	</head>
+	<body>
+		<a class="saltar" href="#contenido">Saltar al contenido</a>
+		<header class="cabecera">
+			<div class="contenedor cabecera__fila">
+				<a class="marca" href={ruta()}>
+					<img src={ruta('favicon.svg')} alt="" width="28" height="28" />
+					{producto.nombre}
+				</a>
+				<nav aria-label="Principal">
+					<ul>
+						{
+							enlaces.map((e) => (
+								<li>
+									<a href={e.href} aria-current={e.id === actual ? 'page' : undefined}>
+										{e.texto}
+									</a>
+								</li>
+							))
+						}
+					</ul>
+				</nav>
+			</div>
+		</header>
+		<main id="contenido" tabindex="-1">
+			<slot />
+		</main>
+		<footer class="pie">
+			<div class="contenedor pie__fila">
+				<p>{producto.nombre}: {producto.lema}</p>
+				<p><a href={producto.repositorio}>Código en GitHub</a></p>
+			</div>
+		</footer>
+	</body>
+</html>

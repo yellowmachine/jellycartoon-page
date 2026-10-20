@@ -1,0 +1,33 @@
+---
+import { cargarCaptura } from '../lib/capturas';
+import { ruta } from '../lib/rutas';
+import type { Funcion } from '../lib/web';
+
+interface Props {
+	funcion: Funcion;
+}
+
+const { funcion } = Astro.props;
+const captura = funcion.captura ? await cargarCaptura(funcion.captura) : null;
+---
+
+<article class="tarjeta" id={funcion.id} aria-labelledby={`${funcion.id}-titulo`}>
+	{
+		captura && (
+			<img
+				class="tarjeta__captura"
+				src={ruta(`capturas/${captura.fichero}`)}
+				alt={`Captura de JellyCartoon: ${funcion.titulo}`}
+				width={captura.ancho}
+				height={captura.alto}
+				loading="lazy"
+				decoding="async"
+			/>
+		)
+	}
+	<div class="tarjeta__texto">
+		<h3 id={`${funcion.id}-titulo`}>{funcion.titulo}</h3>
+		<p class="tarjeta__resumen">{funcion.resumen}</p>
+		<div class="prosa" set:html={funcion.html} />
+	</div>
+</article>

@@ -1,0 +1,36 @@
+---
+import Version from '../components/Version.astro';
+import Base from '../layouts/Base.astro';
+import { cargarNovedades } from '../lib/novedades';
+import { cargarWeb } from '../lib/web';
+
+const { producto } = await cargarWeb();
+const versiones = await cargarNovedades();
+---
+
+<Base
+	titulo="Novedades"
+	descripcion={`Lo que trae cada versión de ${producto.nombre}.`}
+	producto={producto}
+	actual="novedades"
+>
+	<div class="seccion">
+		<div class="contenedor contenedor--estrecho">
+			<h1>Novedades</h1>
+			<p class="entradilla">Lo que trae cada versión de {producto.nombre}, de la más nueva a la más antigua.</p>
+			{
+				versiones.length ? (
+					<ol class="lista-versiones" role="list">
+						{versiones.map((version) => (
+							<li>
+								<Version version={version} />
+							</li>
+						))}
+					</ol>
+				) : (
+					<p class="apagado">No se han podido cargar las novedades.</p>
+				)
+			}
+		</div>
+	</div>
+</Base>
