@@ -1,16 +1,18 @@
 // Los textos de la web: docs/web.md del repo de JellyCartoon. Frontmatter YAML con los datos del
 // producto y, después, una sección «## Título» por función, que empieza por un párrafo de campos
-// («resumen: …» y, si tiene, «captura: fichero.png») y sigue con uno o varios párrafos.
+// («resumen: …» y, si los tiene, «captura: fichero.png» e «icono: nombre-de-lucide») y sigue con uno
+// o varios párrafos.
 import type { Paragraph, RootContent } from 'mdast';
 import { toString } from 'mdast-util-to-string';
 import { parse as parsearYaml } from 'yaml';
 import { avisar, describirOrigen, leerTexto, releerSiempre } from './fuente';
+import { cargarIcono } from './iconos';
 import { aHtml, parsear } from './markdown';
 
 const FICHERO = 'docs/web.md';
 const OBLIGATORIOS = ['nombre', 'lema', 'descripcion', 'para_quien', 'repositorio', 'instalar'] as const;
 const URLS = ['repositorio', 'instalar'] as const;
-const CAMPOS_DE_FUNCION = ['resumen', 'captura'] as const;
+const CAMPOS_DE_FUNCION = ['resumen', 'captura', 'icono'] as const;
 const NOMBRE_DE_CAPTURA = /^[\w-]+\.(png|jpe?g|webp)$/i;
 
 export interface Producto {
@@ -29,6 +31,8 @@ export interface Funcion {
 	id: string;
 	resumen: string;
 	captura?: string;
+	/** El SVG del icono de Lucide que nombra la sección. */
+	icono?: string;
 	html: string;
 }
 
@@ -94,11 +98,16 @@ async function leerFuncion({ titulo, nodos }: { titulo: string; nodos: RootConte
 	if (campos.captura && !NOMBRE_DE_CAPTURA.test(campos.captura)) {
 		fallo(`la captura de «${titulo}» no es un nombre de imagen válido: ${campos.captura}`);
 	}
+	const icono = campos.icono ? await cargarIcono(campos.icono) : undefined;
+	if (icono === null) {
+		fallo(`el icono de «${titulo}» no existe en Lucide: ${campos.icono} (los nombres, en https://lucide.dev/icons).`);
+	}
 	return {
 		titulo,
 		id: aId(titulo),
 		resumen: campos.resumen,
 		captura: campos.captura,
+		icono,
 		html: await aHtml(resto, 3),
 	};
 }

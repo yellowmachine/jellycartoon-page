@@ -12,7 +12,8 @@ Nada se copia a mano: todo se lee del repo de JellyCartoon al construir.
 | --- | --- |
 | Textos | `docs/web.md`: el frontmatter con los datos del producto y una sección `## …` por función |
 | Capturas | `docs/capturas/<fichero>`, con el nombre que da cada sección; si falta una, la tarjeta va sin imagen |
-| Icono | `static/icon.svg` |
+| Icono de la app | `static/icon.svg` |
+| Iconos de las tarjetas | El campo `icono:` de cada sección, con un nombre de [Lucide](https://lucide.dev/icons); el SVG sale del paquete `lucide-static`. Si el nombre no existe, la construcción falla |
 | Novedades | Las releases, de la API de GitHub, también en desarrollo |
 
 Los ficheros salen de la copia local, en `JELLYCARTOON_DIR` (por defecto `../jellycartoon`), para

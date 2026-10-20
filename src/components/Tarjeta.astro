@@ -26,7 +26,10 @@ const captura = funcion.captura ? await cargarCaptura(funcion.captura) : null;
 		)
 	}
 	<div class="tarjeta__texto">
-		<h3 id={`${funcion.id}-titulo`}>{funcion.titulo}</h3>
+		<h3 id={`${funcion.id}-titulo`}>
+			{funcion.icono && <Fragment set:html={funcion.icono} />}
+			{funcion.titulo}
+		</h3>
 		<p class="tarjeta__resumen">{funcion.resumen}</p>
 		<div class="prosa" set:html={funcion.html} />
 	</div>

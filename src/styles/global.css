@@ -298,6 +298,19 @@ img {
 	padding: 1.25rem;
 }
 
+.tarjeta__texto h3 {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.tarjeta__icono {
+	flex: none;
+	width: 1.25em;
+	height: 1.25em;
+	color: var(--ambar-claro);
+}
+
 .tarjeta__resumen {
 	color: var(--ambar-claro);
 	font-weight: 600;
