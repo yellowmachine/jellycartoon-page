@@ -321,6 +321,28 @@ img {
 	font-size: 0.9875rem;
 }
 
+/* Instalar desde la terminal */
+
+.instalar-tu {
+	margin-top: 2rem;
+}
+
+.instalar-tu h2 {
+	margin: 0 0 0.5rem;
+}
+
+.comando {
+	margin: 0;
+	padding: 1rem 1.25rem;
+	background: var(--superficie);
+	border: 1px solid var(--borde);
+	border-radius: var(--radio);
+	overflow-x: auto;
+	font-size: 0.9375rem;
+	color: var(--ambar-claro);
+	user-select: all;
+}
+
 /* Texto que viene de Markdown */
 
 .prosa > :last-child {

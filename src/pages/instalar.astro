@@ -18,6 +18,15 @@ const ultima = ultimaVersion(await cargarNovedades());
 		<div class="contenedor contenedor--estrecho">
 			<h1>Instalar {producto.nombre}</h1>
 			{producto.instalar_resumen && <p class="entradilla">{producto.instalar_resumen}</p>}
+			{
+				producto.instalar_comando && (
+					<section class="instalar-tu" aria-labelledby="instalar-tu-titulo">
+						<h2 id="instalar-tu-titulo">Instálala tú mismo</h2>
+						<p>En el ordenador de casa, abre una terminal y pega esta línea:</p>
+						<pre class="comando"><code>{producto.instalar_comando}</code></pre>
+					</section>
+				)
+			}
 			<p class="acciones">
 				<a class="boton" href={producto.instalar}>Instrucciones de instalación</a>
 				<a class="boton boton--secundario" href={producto.repositorio}>Código en GitHub</a>

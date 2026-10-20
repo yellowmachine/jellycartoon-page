@@ -24,6 +24,8 @@ export interface Producto {
 	instalar: string;
 	/** Opcional mientras no esté en main: sin él, la página de instalar enseña solo el enlace. */
 	instalar_resumen?: string;
+	/** La línea que instala la app desde una terminal («curl … install.sh | sh»). Opcional igual. */
+	instalar_comando?: string;
 }
 
 export interface Funcion {
@@ -87,6 +89,14 @@ function leerProducto(yaml: string): Producto {
 	}
 	if (typeof campos.instalar_resumen !== 'string') {
 		avisar(`${FICHERO} no tiene «instalar_resumen»; la página de instalar sale sin resumen.`);
+	}
+	const comando = campos.instalar_comando;
+	if (comando === undefined) {
+		avisar(`${FICHERO} no tiene «instalar_comando»; la página de instalar sale sin la línea para la terminal.`);
+	} else if (typeof comando !== 'string' || !comando.trim() || comando.trim().includes('\n')) {
+		fallo('«instalar_comando» tiene que ser una sola línea de texto.');
+	} else {
+		campos.instalar_comando = comando.trim();
 	}
 	return campos as unknown as Producto;
 }
