@@ -1,4 +1,5 @@
 ---
+import Comando from '../components/Comando.astro';
 import Base from '../layouts/Base.astro';
 import { cargarNovedades, ultimaVersion } from '../lib/novedades';
 import { fecha, ruta } from '../lib/rutas';
@@ -23,7 +24,7 @@ const ultima = ultimaVersion(await cargarNovedades());
 					<section class="instalar-tu" aria-labelledby="instalar-tu-titulo">
 						<h2 id="instalar-tu-titulo">Instálala tú mismo</h2>
 						<p>En el ordenador de casa, abre una terminal y pega esta línea:</p>
-						<pre class="comando"><code>{producto.instalar_comando}</code></pre>
+						<Comando comando={producto.instalar_comando} />
 					</section>
 				)
 			}

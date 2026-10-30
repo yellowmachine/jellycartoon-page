@@ -1,6 +1,7 @@
 ---
 import Tarjeta from '../components/Tarjeta.astro';
 import Version from '../components/Version.astro';
+import Comando from '../components/Comando.astro';
 import Base from '../layouts/Base.astro';
 import { cargarIcono } from '../lib/iconos';
 import { cargarNovedades, ultimaVersion } from '../lib/novedades';
@@ -24,7 +25,7 @@ const iconoNube = await cargarIcono('cloud');
 					producto.instalar_comando && (
 						<div class="portada__instalar">
 							<p>En una terminal del ordenador de casa:</p>
-							<pre class="comando"><code>{producto.instalar_comando}</code></pre>
+							<Comando comando={producto.instalar_comando} />
 						</div>
 					)
 				}

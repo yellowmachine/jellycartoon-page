@@ -1,0 +1,43 @@
+---
+// Una línea para la terminal, en una sola línea aunque no quepa (se desliza), con el icono de
+// copiar al final. Sin JavaScript no sale el botón, y la línea se selecciona entera de un toque.
+import { cargarIcono } from '../lib/iconos';
+
+interface Props {
+	comando: string;
+}
+
+const { comando } = Astro.props;
+const [copiar, hecho] = await Promise.all([cargarIcono('copy'), cargarIcono('check')]);
+---
+
+<div class="comando">
+	<code>{comando}</code>
+	<button type="button" class="comando__copiar" data-copiar={comando} aria-label="Copiar" title="Copiar" hidden>
+		<span class="comando__icono"><Fragment set:html={copiar} /></span>
+		<span class="comando__icono comando__icono--hecho"><Fragment set:html={hecho} /></span>
+	</button>
+</div>
+
+<script>
+	for (const boton of document.querySelectorAll<HTMLButtonElement>('[data-copiar]')) {
+		// Sin portapapeles (http, navegadores viejos) se queda escondido.
+		if (!navigator.clipboard) continue;
+		boton.hidden = false;
+		let espera: ReturnType<typeof setTimeout> | undefined;
+		boton.addEventListener('click', async () => {
+			try {
+				await navigator.clipboard.writeText(boton.dataset.copiar ?? '');
+			} catch {
+				return;
+			}
+			boton.dataset.hecho = '';
+			boton.setAttribute('aria-label', 'Copiado');
+			clearTimeout(espera);
+			espera = setTimeout(() => {
+				delete boton.dataset.hecho;
+				boton.setAttribute('aria-label', 'Copiar');
+			}, 2000);
+		});
+	}
+</script>

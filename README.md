@@ -1,7 +1,7 @@
 # Web de JellyCartoon
 
 La web del producto [JellyCartoon](https://github.com/yellowmachine/jellycartoon), hecha con Astro.
-Es estática y no lleva JavaScript en el navegador. Se publica en
+Es estática; en el navegador, solo un script pequeño para el botón de copiar el comando de instalar (sin él, el comando se ve igual). Se publica en
 <https://yellowmachine.github.io/jellycartoon-page/>.
 
 ## De dónde sale el contenido
