@@ -243,12 +243,6 @@ img {
 	max-width: 44rem;
 }
 
-/* Entero a la vista, aunque parta la línea: se copia igual (user-select: all). */
-.portada__instalar .comando {
-	white-space: pre-wrap;
-	overflow-wrap: anywhere;
-}
-
 .portada__instalar p {
 	margin-bottom: 0.5rem;
 	color: var(--apagado);
@@ -426,16 +420,68 @@ img {
 	margin: 0 0 0.5rem;
 }
 
+/* En una sola línea: lo que no cabe se desliza, y el botón de copiar queda siempre al final. */
 .comando {
-	margin: 0;
-	padding: 1rem 1.25rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.375rem 0.375rem 0.375rem 1.25rem;
 	background: var(--superficie);
 	border: 1px solid var(--borde);
 	border-radius: var(--radio);
+}
+
+.comando code {
+	flex: 1;
+	min-width: 0;
+	padding-block: 0.625rem;
 	overflow-x: auto;
+	white-space: nowrap;
+	scrollbar-width: none;
 	font-size: 0.9375rem;
 	color: var(--crema);
 	user-select: all;
+}
+
+.comando__copiar {
+	flex: none;
+	display: inline-grid;
+	place-items: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 0.5rem;
+	background: transparent;
+	color: var(--texto-suave);
+	cursor: pointer;
+}
+
+.comando__copiar:hover {
+	background: var(--fondo);
+	border-color: var(--borde);
+	color: var(--texto);
+}
+
+/* Los dos iconos en la misma celda: el de copiar, o el ✓ un momento tras copiar. */
+.comando__icono {
+	grid-area: 1 / 1;
+	display: flex;
+}
+
+.comando__icono svg {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.comando__icono--hecho,
+.comando__copiar[data-hecho] .comando__icono:not(.comando__icono--hecho) {
+	visibility: hidden;
+}
+
+.comando__copiar[data-hecho] .comando__icono--hecho {
+	visibility: visible;
+	color: var(--rojo-claro);
 }
 
 /* Texto que viene de Markdown */
