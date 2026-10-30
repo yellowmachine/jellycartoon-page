@@ -13,7 +13,9 @@ Nada se copia a mano: todo se lee del repo de JellyCartoon al construir.
 | Textos | `docs/web.md`: el frontmatter con los datos del producto y una sección `## …` por función |
 | Capturas | `docs/capturas/<fichero>`, con el nombre que da cada sección; si falta una, la tarjeta va sin imagen |
 | Comando de instalación | `instalar_comando` en el frontmatter de `docs/web.md`, una sola línea (`curl … install.sh \| sh`). Opcional: sin él, la página de instalar enseña solo los enlaces |
-| Icono de la app | `static/icon.svg` |
+| Grupos de la portada | El campo `grupo:` de cada sección; los grupos salen en el orden en que aparecen, y las secciones sin él, en «Y más» |
+| En casa y fuera | `en_casa`, `nube` y `nube_url` en el frontmatter, opcionales: las dos columnas de debajo de las funciones |
+| Icono de la app | `static/icon.svg`, grande en la portada y en la cabecera; sus colores, rojo y crema, son los de la web |
 | Iconos de las tarjetas | El campo `icono:` de cada sección, con un nombre de [Lucide](https://lucide.dev/icons); el SVG sale del paquete `lucide-static`. Si el nombre no existe, la construcción falla |
 | Novedades | Las releases, de la API de GitHub, también en desarrollo |
 

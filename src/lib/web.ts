@@ -1,7 +1,7 @@
 // Los textos de la web: docs/web.md del repo de JellyCartoon. Frontmatter YAML con los datos del
 // producto y, después, una sección «## Título» por función, que empieza por un párrafo de campos
-// («resumen: …» y, si los tiene, «captura: fichero.png» e «icono: nombre-de-lucide») y sigue con uno
-// o varios párrafos.
+// («resumen: …» y, si los tiene, «captura: fichero.png», «icono: nombre-de-lucide» y «grupo: …») y
+// sigue con uno o varios párrafos.
 import type { Paragraph, RootContent } from 'mdast';
 import { toString } from 'mdast-util-to-string';
 import { parse as parsearYaml } from 'yaml';
@@ -12,7 +12,7 @@ import { aHtml, parsear } from './markdown';
 const FICHERO = 'docs/web.md';
 const OBLIGATORIOS = ['nombre', 'lema', 'descripcion', 'para_quien', 'repositorio', 'instalar'] as const;
 const URLS = ['repositorio', 'instalar'] as const;
-const CAMPOS_DE_FUNCION = ['resumen', 'captura', 'icono'] as const;
+const CAMPOS_DE_FUNCION = ['resumen', 'captura', 'icono', 'grupo'] as const;
 const NOMBRE_DE_CAPTURA = /^[\w-]+\.(png|jpe?g|webp)$/i;
 
 export interface Producto {
@@ -26,6 +26,10 @@ export interface Producto {
 	instalar_resumen?: string;
 	/** La línea que instala la app desde una terminal («curl … install.sh | sh»). Opcional igual. */
 	instalar_comando?: string;
+	/** Lo que se queda en casa, y Seilide fuera de ella: las dos columnas bajo las funciones. */
+	en_casa?: string;
+	nube?: string;
+	nube_url?: string;
 }
 
 export interface Funcion {
@@ -33,6 +37,8 @@ export interface Funcion {
 	id: string;
 	resumen: string;
 	captura?: string;
+	/** El bloque de la portada en el que va; sin él, en «Y más». */
+	grupo?: string;
 	/** El SVG del icono de Lucide que nombra la sección. */
 	icono?: string;
 	html: string;
@@ -41,6 +47,22 @@ export interface Funcion {
 export interface Web {
 	producto: Producto;
 	funciones: Funcion[];
+}
+
+export interface Grupo {
+	titulo: string;
+	funciones: Funcion[];
+}
+
+/** Las funciones por su grupo, en el orden en que aparece cada grupo en docs/web.md. */
+export function agrupar(funciones: Funcion[]): Grupo[] {
+	const grupos = new Map<string, Funcion[]>();
+	for (const funcion of funciones) {
+		const titulo = funcion.grupo ?? 'Y más';
+		if (!grupos.has(titulo)) grupos.set(titulo, []);
+		grupos.get(titulo)!.push(funcion);
+	}
+	return [...grupos].map(([titulo, funciones]) => ({ titulo, funciones }));
 }
 
 let cache: Promise<Web> | undefined;
@@ -98,6 +120,9 @@ function leerProducto(yaml: string): Producto {
 	} else {
 		campos.instalar_comando = comando.trim();
 	}
+	if (campos.nube_url !== undefined && (typeof campos.nube_url !== 'string' || !URL.canParse(campos.nube_url))) {
+		fallo(`«nube_url» no es una URL: ${campos.nube_url}`);
+	}
 	return campos as unknown as Producto;
 }
 
@@ -117,6 +142,7 @@ async function leerFuncion({ titulo, nodos }: { titulo: string; nodos: RootConte
 		id: aId(titulo),
 		resumen: campos.resumen,
 		captura: campos.captura,
+		grupo: campos.grupo,
 		icono,
 		html: await aHtml(resto, 3),
 	};
