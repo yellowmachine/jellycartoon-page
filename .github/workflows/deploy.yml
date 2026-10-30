@@ -1,9 +1,12 @@
 # Construye la web con el contenido de la rama main de JellyCartoon y la publica en GitHub Pages:
 # en cada push, una vez al día (para recoger cambios del otro repo y las releases nuevas) y a mano.
+# En las pull requests a main solo construye, para saber antes de fusionar si la web sale.
 name: Publicar la web
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   schedule:
     - cron: '0 5 * * *'
@@ -14,9 +17,10 @@ permissions:
   pages: write
   id-token: write
 
+# Las publicaciones, una detrás de otra; las construcciones de una PR, solo la última.
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.ref) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   construir:
@@ -32,11 +36,13 @@ jobs:
         env:
           # Sube el límite de la API de GitHub; sin él también funciona (60 peticiones por hora).
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-pages-artifact@v5
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
   publicar:
+    if: github.event_name != 'pull_request'
     needs: construir
     runs-on: ubuntu-latest
     environment:

@@ -66,7 +66,10 @@ const canonica = new URL(Astro.url.pathname, Astro.site);
 		<footer class="pie">
 			<div class="contenedor pie__fila">
 				<p>{producto.nombre}: {producto.lema}</p>
-				<p><a href={producto.repositorio}>Código en GitHub</a></p>
+				<p>
+					<a href={`${producto.repositorio}/blob/main/LICENSE`}>Libre (AGPL-3.0)</a> ·
+					<a href={producto.repositorio}>Código en GitHub</a>
+				</p>
 			</div>
 		</footer>
 	</body>

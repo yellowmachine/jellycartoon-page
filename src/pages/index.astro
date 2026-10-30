@@ -2,24 +2,38 @@
 import Tarjeta from '../components/Tarjeta.astro';
 import Version from '../components/Version.astro';
 import Base from '../layouts/Base.astro';
+import { cargarIcono } from '../lib/iconos';
 import { cargarNovedades, ultimaVersion } from '../lib/novedades';
 import { ruta } from '../lib/rutas';
-import { cargarWeb } from '../lib/web';
+import { agrupar, cargarWeb } from '../lib/web';
 
 const { producto, funciones } = await cargarWeb();
+const grupos = agrupar(funciones);
 const ultima = ultimaVersion(await cargarNovedades());
+const iconoCasa = await cargarIcono('house');
+const iconoNube = await cargarIcono('cloud');
 ---
 
 <Base descripcion={producto.descripcion} producto={producto} actual="inicio">
 	<section class="portada" aria-labelledby="lema">
-		<div class="contenedor">
-			<p class="antetitulo">{producto.nombre}</p>
-			<h1 id="lema">{producto.lema}</h1>
-			<p class="entradilla">{producto.descripcion}</p>
-			<p class="acciones">
-				<a class="boton" href={ruta('instalar/')}>Cómo instalarla</a>
-				<a class="boton boton--secundario" href={producto.repositorio}>Código en GitHub</a>
-			</p>
+		<div class="contenedor portada__rejilla">
+			<div class="portada__texto">
+				<h1 id="lema">{producto.lema}</h1>
+				<p class="entradilla">{producto.descripcion}</p>
+				{
+					producto.instalar_comando && (
+						<div class="portada__instalar">
+							<p>En una terminal del ordenador de casa:</p>
+							<pre class="comando"><code>{producto.instalar_comando}</code></pre>
+						</div>
+					)
+				}
+				<p class="acciones">
+					<a class="boton" href={ruta('instalar/')}>Cómo instalarla</a>
+					<a class="boton boton--secundario" href={producto.repositorio}>Código en GitHub</a>
+				</p>
+			</div>
+			<img class="portada__icono" src={ruta('favicon.svg')} alt="" width="320" height="320" />
 		</div>
 	</section>
 
@@ -33,11 +47,52 @@ const ultima = ultimaVersion(await cargarNovedades());
 	<section class="seccion" aria-labelledby="funciones">
 		<div class="contenedor">
 			<h2 id="funciones">Qué hace</h2>
-			<div class="rejilla">
-				{funciones.map((funcion) => <Tarjeta funcion={funcion} />)}
-			</div>
+			{
+				grupos.map((grupo) => (
+					<div class="grupo">
+						<h3 class="grupo__titulo">{grupo.titulo}</h3>
+						<div class="rejilla">
+							{grupo.funciones.map((funcion) => (
+								<Tarjeta funcion={funcion} nivel={4} />
+							))}
+						</div>
+					</div>
+				))
+			}
 		</div>
 	</section>
+
+	{
+		(producto.en_casa || producto.nube) && (
+			<section class="seccion" aria-label="En casa y fuera de casa">
+				<div class="contenedor columnas">
+					{producto.en_casa && (
+						<div class="columna">
+							<h2>
+								<Fragment set:html={iconoCasa} />
+								Tuya, en tu casa
+							</h2>
+							<p>{producto.en_casa}</p>
+						</div>
+					)}
+					{producto.nube && (
+						<div class="columna">
+							<h2>
+								<Fragment set:html={iconoNube} />
+								Fuera de casa, con Seilide
+							</h2>
+							<p>{producto.nube}</p>
+							{producto.nube_url && (
+								<p>
+									<a href={producto.nube_url}>Conoce Seilide</a>
+								</p>
+							)}
+						</div>
+					)}
+				</div>
+			</section>
+		)
+	}
 
 	{
 		ultima && (
